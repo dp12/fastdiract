@@ -1,0 +1,69 @@
+##################
+# Config Options #
+##################
+FASTDIRACT_DIR=~/.fastdiract
+FASTDIR_FILE=$FASTDIRACT_DIR/fastdirs
+FASTACT_FILE=$FASTDIRACT_DIR/fastactions
+
+####################
+# Helper Functions #
+####################
+echorun () {
+  echo "$@"; eval "$@"
+}
+
+#######################
+# Fastdir Definitions #
+#######################
+alias d0='echorun cd \"$(cat $FASTDIR_FILE | grep "d0 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && ls'
+alias d1='echorun cd \"$(cat $FASTDIR_FILE | grep "d1 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && ls'
+alias d2='echorun cd \"$(cat $FASTDIR_FILE | grep "d2 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && ls'
+alias d3='echorun cd \"$(cat $FASTDIR_FILE | grep "d3 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && ls'
+alias d4='echorun cd \"$(cat $FASTDIR_FILE | grep "d4 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && ls'
+alias d5='echorun cd \"$(cat $FASTDIR_FILE | grep "d5 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && ls'
+alias d6='echorun cd \"$(cat $FASTDIR_FILE | grep "d6 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && ls'
+alias d7='echorun cd \"$(cat $FASTDIR_FILE | grep "d7 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && ls'
+alias d8='echorun cd \"$(cat $FASTDIR_FILE | grep "d8 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && ls'
+alias d9='echorun cd \"$(cat $FASTDIR_FILE | grep "d9 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && ls'
+
+alias d0.='sed -i --follow-symlinks "s|d0 =.*$|d0 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d1.='sed -i --follow-symlinks "s|d1 =.*$|d1 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d2.='sed -i --follow-symlinks "s|d2 =.*$|d2 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d3.='sed -i --follow-symlinks "s|d3 =.*$|d3 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d4.='sed -i --follow-symlinks "s|d4 =.*$|d4 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d5.='sed -i --follow-symlinks "s|d5 =.*$|d5 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d6.='sed -i --follow-symlinks "s|d6 =.*$|d6 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d7.='sed -i --follow-symlinks "s|d7 =.*$|d7 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d8.='sed -i --follow-symlinks "s|d8 =.*$|d8 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d9.='sed -i --follow-symlinks "s|d9 =.*$|d9 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d?='cat $FASTDIR_FILE | grep "d[0-9]"'
+alias d='cat $FASTDIR_FILE | grep "d[0-9]"'
+
+#######################
+# Fastact Definitions #
+#######################
+alias f0='echorun $(cat $FASTACT_FILE | grep "f0 = " | cut -d"=" -f 2-)'
+alias f1='echorun $(cat $FASTACT_FILE | grep "f1 = " | cut -d"=" -f 2-)'
+alias f2='echorun $(cat $FASTACT_FILE | grep "f2 = " | cut -d"=" -f 2-)'
+alias f3='echorun $(cat $FASTACT_FILE | grep "f3 = " | cut -d"=" -f 2-)'
+alias f4='echorun $(cat $FASTACT_FILE | grep "f4 = " | cut -d"=" -f 2-)'
+alias f5='echorun $(cat $FASTACT_FILE | grep "f5 = " | cut -d"=" -f 2-)'
+alias f6='echorun $(cat $FASTACT_FILE | grep "f6 = " | cut -d"=" -f 2-)'
+alias f7='echorun $(cat $FASTACT_FILE | grep "f7 = " | cut -d"=" -f 2-)'
+alias f8='echorun $(cat $FASTACT_FILE | grep "f8 = " | cut -d"=" -f 2-)'
+alias f9='echorun $(cat $FASTACT_FILE | grep "f9 = " | cut -d"=" -f 2-)'
+
+# NOTE: When using f1.-f9., use single quotes to wrap the whole command
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+alias f0.='python $SCRIPT_DIR/fastactions.py f0'
+alias f1.='python $SCRIPT_DIR/fastactions.py f1'
+alias f2.='python $SCRIPT_DIR/fastactions.py f2'
+alias f3.='python $SCRIPT_DIR/fastactions.py f3'
+alias f4.='python $SCRIPT_DIR/fastactions.py f4'
+alias f5.='python $SCRIPT_DIR/fastactions.py f5'
+alias f6.='python $SCRIPT_DIR/fastactions.py f6'
+alias f7.='python $SCRIPT_DIR/fastactions.py f7'
+alias f8.='python $SCRIPT_DIR/fastactions.py f8'
+alias f9.='python $SCRIPT_DIR/fastactions.py f9'
+alias f?='cat $FASTACT_FILE | grep "f[0-9]"'
+alias f='cat $FASTACT_FILE | grep "f[0-9]"'
