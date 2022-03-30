@@ -1,0 +1,346 @@
+##################
+# Config Options #
+##################
+FASTDIRACT_DIR=~/.fastdiract
+FASTDIR_FILE=$FASTDIRACT_DIR/fastdirs
+FASTACT_FILE=$FASTDIRACT_DIR/fastactions
+FASTDIR_POSTCMD="ls"
+FASTDIR_ECHO="off"
+
+FASTACT_ECHO="on"
+FASTACT_CONF="off"
+FASTACT_MENU_CONF="off"
+FASTACT_D_RUNS_MENU="off"
+FASTACT_F_RUNS_MENU="off"
+
+GREEN='\033[1;32m'
+CTX_COLOR=$GREEN
+NC='\033[1;0m'
+
+####################
+# Helper Functions #
+####################
+fastdir_run () {
+  if [ "$FASTDIR_ECHO" == "on" ]; then
+    echo "$@"
+  fi
+  # NOTE: must use eval to expand envvars
+  eval "$@"
+}
+
+fastact_run () {
+  if [ "$FASTACT_ECHO" == "on" ]; then
+    echo "$@"
+  fi
+  if [ "$FASTACT_CONF" == "on" ]; then
+    # NOTE: must use eval to expand envvars
+    echo -n "Execute [y/n]? "
+    reply=$(bash -c "read -n 1 c; echo \$c")
+    if [ "$reply" != "${reply#[Yy]}" ]; then
+      echo ""
+      eval "$@"
+    fi
+  else
+    eval "$@"
+  fi
+}
+
+fastdiract_get_fastdir_ctx() {
+  echo "$(readlink -f $FASTDIR_FILE | cut -d'_' -f3)"
+}
+
+fastdiract_get_fastact_ctx() {
+  echo "$(readlink -f $FASTACT_FILE | cut -d'_' -f3)"
+}
+
+#######################
+# Fastdir Definitions #
+#######################
+alias d0='fastdir_run cd \"$(cat $FASTDIR_FILE | grep "d0 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && $FASTDIR_POSTCMD'
+alias d1='fastdir_run cd \"$(cat $FASTDIR_FILE | grep "d1 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && $FASTDIR_POSTCMD'
+alias d2='fastdir_run cd \"$(cat $FASTDIR_FILE | grep "d2 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && $FASTDIR_POSTCMD'
+alias d3='fastdir_run cd \"$(cat $FASTDIR_FILE | grep "d3 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && $FASTDIR_POSTCMD'
+alias d4='fastdir_run cd \"$(cat $FASTDIR_FILE | grep "d4 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && $FASTDIR_POSTCMD'
+alias d5='fastdir_run cd \"$(cat $FASTDIR_FILE | grep "d5 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && $FASTDIR_POSTCMD'
+alias d6='fastdir_run cd \"$(cat $FASTDIR_FILE | grep "d6 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && $FASTDIR_POSTCMD'
+alias d7='fastdir_run cd \"$(cat $FASTDIR_FILE | grep "d7 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && $FASTDIR_POSTCMD'
+alias d8='fastdir_run cd \"$(cat $FASTDIR_FILE | grep "d8 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && $FASTDIR_POSTCMD'
+alias d9='fastdir_run cd \"$(cat $FASTDIR_FILE | grep "d9 = " | cut -d"=" -f 2- | sed "s/~/\$HOME/" | xargs)\" && $FASTDIR_POSTCMD'
+
+alias d0.='sed -i --follow-symlinks "s|d0 =.*$|d0 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d1.='sed -i --follow-symlinks "s|d1 =.*$|d1 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d2.='sed -i --follow-symlinks "s|d2 =.*$|d2 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d3.='sed -i --follow-symlinks "s|d3 =.*$|d3 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d4.='sed -i --follow-symlinks "s|d4 =.*$|d4 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d5.='sed -i --follow-symlinks "s|d5 =.*$|d5 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d6.='sed -i --follow-symlinks "s|d6 =.*$|d6 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d7.='sed -i --follow-symlinks "s|d7 =.*$|d7 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d8.='sed -i --follow-symlinks "s|d8 =.*$|d8 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d9.='sed -i --follow-symlinks "s|d9 =.*$|d9 = $(pwd | sed "s|^$HOME|~|")|g" $FASTDIR_FILE'
+alias d?='echo -e "${CTX_COLOR}[$(fastdiract_get_fastdir_ctx)]${NC}"; cat $FASTDIR_FILE | grep "d[0-9]"'
+
+d() {
+  if [ "$FASTACT_D_RUNS_MENU" == "on" ]; then
+    dm
+  else
+    d?
+  fi
+}
+
+dm() {
+  if ! [ "$#" == 1 -a "$1" == "quiet" ]; then
+    d?
+  fi
+  echo -n "> "
+  reply=$(bash -c "read -n 1 c; echo \$c")
+  echo ""
+  local cmd=""
+  if [ "$reply" == "." ]; then
+    echo -n "Save cwd to: "
+    reply=$(bash -c "read -n 1 c; echo \$c")
+    cmd="d${reply}."
+    eval "$cmd"
+  elif [ "$reply" == "w" ]; then
+    dw
+  elif [ "$reply" == "x" ]; then
+    dx
+  elif [ "$reply" == "X" ]; then
+    dX
+  elif [ "$reply" == "-" ]; then
+    d-
+  elif [[ "$reply" =~ [0-9] ]]; then
+    cmd="d${reply}"
+    eval "$cmd"
+  elif [ "$reply" == "?" ]; then
+    echo "= COMMANDS =========================================="
+    echo ". Set dir     w Swap dirs       x Change context"
+    echo "? Show help   0-9 Jump to dir   X Create new context"
+    echo "- Delete context"
+    echo "====================================================="
+    dm "quiet"
+  else
+    echo "invalid cmd \"$reply\""
+  fi
+}
+
+dw() {
+  echo "Swap directories:"
+  echo -n "> "
+  dirnum1=$(bash -c "read -n 1 c; echo \$c")
+  echo ""
+  if [[ $dirnum1 =~ [0-9] ]]; then
+    echo -n "> "
+    dirnum2=$(bash -c "read -n 1 c; echo \$c")
+    echo ""
+    if [[ $dirnum2 =~ [0-9] ]]; then
+      dir1="$(cat $FASTDIR_FILE | grep 'd'${dirnum1}' = ' | cut -d'=' -f 2- | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+      dir2="$(cat $FASTDIR_FILE | grep 'd'${dirnum2}' = ' | cut -d'=' -f 2- | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+      sed -i --follow-symlinks "s|d${dirnum1} =.*$|d${dirnum1} = $dir2|g" $FASTDIR_FILE
+      sed -i --follow-symlinks "s|d${dirnum2} =.*$|d${dirnum2} = $dir1|g" $FASTDIR_FILE
+      d?
+    fi
+  fi
+}
+
+dx() {
+  choice="$(ls -1 $FASTDIRACT_DIR/fastdirs__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --prompt="Change fastdir ctx from [$(fastdiract_get_fastdir_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastdirs__{}' | grep 'd[0-9]'" --preview-window=wrap)"
+  # Test to handle case where fzf was cancelled
+  if [ -n "$choice" ]; then
+    unlink "$FASTDIR_FILE"
+    ln -s "$FASTDIRACT_DIR/fastdirs__${choice}" "$FASTDIR_FILE"
+    d?
+  fi
+}
+
+dX() {
+  echo -n "Create new fastdir ctx? [y/n] "
+  user_resp=$(bash -c "read -n 1 c; echo \$c")
+  if [ "$user_resp" == "y" ]; then
+    echo -n "\nEnter new ctx name: "
+    read new_ctx
+    echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
+    user_resp=$(bash -c "read -n 1 c; echo \$c")
+    if [ "$user_resp" == "y" ]; then
+      base="$(ls -1 $FASTDIRACT_DIR/fastdirs__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastdirs__{}' | grep 'd[0-9]'" --preview-window=wrap)"
+      echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
+      user_resp=$(bash -c "read -n 1 c; echo \$c")
+      if [ "$user_resp" == "y" ]; then
+        cp "$FASTDIRACT_DIR/fastdirs__${base}" "$FASTDIRACT_DIR/fastdirs__${new_ctx}"
+        unlink "$FASTDIR_FILE"
+        ln -s "$FASTDIRACT_DIR/fastdirs__${new_ctx}" "$FASTDIR_FILE"
+        echo "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
+      fi
+    fi
+  fi
+}
+
+d-() {
+  choice="$(ls -1 $FASTDIRACT_DIR/fastdirs__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --prompt="fastdir ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastdirs__{}' | grep 'd[0-9]'" --preview-window=wrap)"
+  if [ "$(fastdiract_get_fastdir_ctx)" == "$choice" ]; then
+    echo "Can't delete the current fastdir ctx; switch to another ctx first"
+  else
+    echo -ne "Delete fastdir ctx ${CTX_COLOR}[$choice]${NC}? [y/n] "
+    user_resp=$(bash -c "read -n 1 c; echo \$c")
+    if [ "$user_resp" == "y" ]; then
+      rm "$FASTDIRACT_DIR/fastdirs__$choice"
+      echo "\nDeleted fastdir ctx $choice"
+    fi
+  fi
+}
+
+#######################
+# Fastact Definitions #
+#######################
+alias f0='fastact_run $(cat $FASTACT_FILE | grep "f0 = " | cut -d"=" -f 2-)'
+alias f1='fastact_run $(cat $FASTACT_FILE | grep "f1 = " | cut -d"=" -f 2-)'
+alias f2='fastact_run $(cat $FASTACT_FILE | grep "f2 = " | cut -d"=" -f 2-)'
+alias f3='fastact_run $(cat $FASTACT_FILE | grep "f3 = " | cut -d"=" -f 2-)'
+alias f4='fastact_run $(cat $FASTACT_FILE | grep "f4 = " | cut -d"=" -f 2-)'
+alias f5='fastact_run $(cat $FASTACT_FILE | grep "f5 = " | cut -d"=" -f 2-)'
+alias f6='fastact_run $(cat $FASTACT_FILE | grep "f6 = " | cut -d"=" -f 2-)'
+alias f7='fastact_run $(cat $FASTACT_FILE | grep "f7 = " | cut -d"=" -f 2-)'
+alias f8='fastact_run $(cat $FASTACT_FILE | grep "f8 = " | cut -d"=" -f 2-)'
+alias f9='fastact_run $(cat $FASTACT_FILE | grep "f9 = " | cut -d"=" -f 2-)'
+
+# NOTE: When using f1.-f9., use single quotes to wrap the whole command
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+alias f0.='python $SCRIPT_DIR/fastactions.py f0'
+alias f1.='python $SCRIPT_DIR/fastactions.py f1'
+alias f2.='python $SCRIPT_DIR/fastactions.py f2'
+alias f3.='python $SCRIPT_DIR/fastactions.py f3'
+alias f4.='python $SCRIPT_DIR/fastactions.py f4'
+alias f5.='python $SCRIPT_DIR/fastactions.py f5'
+alias f6.='python $SCRIPT_DIR/fastactions.py f6'
+alias f7.='python $SCRIPT_DIR/fastactions.py f7'
+alias f8.='python $SCRIPT_DIR/fastactions.py f8'
+alias f9.='python $SCRIPT_DIR/fastactions.py f9'
+alias f?='echo "${CTX_COLOR}[$(fastdiract_get_fastact_ctx)]${NC}"; cat $FASTACT_FILE | grep "f[0-9]"'
+
+f() {
+  if [ "$FASTACT_F_RUNS_MENU" == "on" ]; then
+    fm
+  else
+    f?
+  fi
+}
+
+fm() {
+  if ! [ "$#" == 1 -a "$1" == "quiet" ]; then
+    f?
+  fi
+  echo -n "> "
+  reply=$(bash -c "read -n 1 c; echo \$c")
+  echo ""
+  local cmd=""
+  if [ "$reply" == "." ]; then
+    echo -n "Enter cmd # to set: "
+    cmdnum=$(bash -c "read -n 1 c; echo \$c")
+    if [[ $cmdnum =~ [0-9] ]]; then
+      setcmd="f${cmdnum}."
+      echo -n "\nEnter cmd: "
+      cmd=$(bash -c "read c; echo \$c")
+      eval "$setcmd $cmd"
+      f?
+    else
+      echo "\ninvalid cmd # $cmdnum"
+    fi
+  elif [ "$reply" == "w" ]; then
+    fw
+  elif [ "$reply" == "x" ]; then
+    fx
+  elif [ "$reply" == "X" ]; then
+    fX
+  elif [ "$reply" == "-" ]; then
+    f-
+  elif [[ "$reply" =~ [0-9] ]]; then
+    cmd="f${reply}"
+    if [ "$FASTACT_MENU_CONF" == "on" -a "$FASTACT_CONF" != "on" ]; then
+      echo -n "Execute $cmd? [y/n] "
+      user_resp=$(bash -c "read -n 1 c; echo \$c")
+      if [ "$user_resp" == "y" ]; then
+        echo ""
+        eval "$cmd"
+      fi
+    else
+      echo ""
+      eval "$cmd"
+    fi
+  elif [ "$reply" == "?" ]; then
+    echo "= COMMANDS ============================================="
+    echo ". Set action   w Swap actions       x Change context"
+    echo "? Show help    0-9 Execute action   X Create new context"
+    echo "- Delete context"
+    echo "========================================================"
+    fm "quiet"
+  else
+    echo "invalid cmd \"$reply\""
+  fi
+}
+
+fw() {
+  echo "Swap actions:"
+  echo -n "> "
+  actnum1=$(bash -c "read -n 1 c; echo \$c")
+  echo ""
+  if [[ $actnum1 =~ [0-9] ]]; then
+    echo -n "> "
+    actnum2=$(bash -c "read -n 1 c; echo \$c")
+    echo ""
+    if [[ $actnum2 =~ [0-9] ]]; then
+      act1="$(cat $FASTACT_FILE | grep 'f'${actnum1}' = ' | cut -d'=' -f 2- | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+      act2="$(cat $FASTACT_FILE | grep 'f'${actnum2}' = ' | cut -d'=' -f 2- | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+      # 2nd sed command is from
+      # https://stackoverflow.com/questions/29613304/is-it-possible-to-escape-regex-metacharacters-reliably-with-sed
+      # to escape metacharacters like &&.
+      sed -i --follow-symlinks "s|f${actnum1} =.*$|f${actnum1} = $(sed 's/[&/\]/\\&/g' <<< $act2)|" $FASTACT_FILE
+      sed -i --follow-symlinks "s|f${actnum2} =.*$|f${actnum2} = $(sed 's/[&/\]/\\&/g' <<< $act1)|" $FASTACT_FILE
+      f?
+    fi
+  fi
+}
+
+fx() {
+  choice="$(ls -1 $FASTDIRACT_DIR/fastactions__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --prompt="Change fastaction ctx from [$(fastdiract_get_fastact_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastactions__{}' | grep 'f[0-9]'" --preview-window=wrap)"
+  # Test to handle case where fzf was cancelled
+  if [ -n "$choice" ]; then
+    unlink "$FASTACT_FILE"
+    ln -s "$FASTDIRACT_DIR/fastactions__${choice}" "$FASTACT_FILE"
+    f?
+fi
+}
+
+fX() {
+  echo -n "Create new fastaction ctx? [y/n] "
+  user_resp=$(bash -c "read -n 1 c; echo \$c")
+  if [ "$user_resp" == "y" ]; then
+    echo -n "\nEnter new ctx name: "
+    read new_ctx
+    echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
+    user_resp=$(bash -c "read -n 1 c; echo \$c")
+    if [ "$user_resp" == "y" ]; then
+      base="$(ls -1 $FASTDIRACT_DIR/fastactions__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastactions__{}' | grep 'f[0-9]'" --preview-window=wrap)"
+      echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
+      user_resp=$(bash -c "read -n 1 c; echo \$c")
+      if [ "$user_resp" == "y" ]; then
+        cp "$FASTDIRACT_DIR/fastactions__${base}" "$FASTDIRACT_DIR/fastactions__${new_ctx}"
+        unlink "$FASTACT_FILE"
+        ln -s "$FASTDIRACT_DIR/fastactions__${new_ctx}" "$FASTACT_FILE"
+        echo "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
+      fi
+    fi
+  fi
+}
+
+f-() {
+  choice="$(ls -1 $FASTDIRACT_DIR/fastactions__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --prompt="fastaction ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastactions__{}' | grep 'd[0-9]'" --preview-window=wrap)"
+  if [ "$(fastdiract_get_fastaction_ctx)" == "$choice" ]; then
+    echo "Can't delete the current fastaction ctx; switch to another ctx first"
+  else
+    echo -ne "Delete fastaction ctx ${CTX_COLOR}[$choice]${NC}? [y/n] "
+    user_resp=$(bash -c "read -n 1 c; echo \$c")
+    if [ "$user_resp" == "y" ]; then
+      rm "$FASTDIRACT_DIR/fastactions__$choice"
+      echo "\nDeleted fastaction ctx $choice"
+    fi
+  fi
+}
