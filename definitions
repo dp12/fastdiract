@@ -3,7 +3,9 @@
 ##################
 FASTDIRACT_DIR=~/.fastdiract
 FASTDIR_FILE=$FASTDIRACT_DIR/fastdirs
+FASTDIR_CTX_POSTSWITCH_CMD="d0"
 FASTACT_FILE=$FASTDIRACT_DIR/fastactions
+FASTVIM_FILE=$FASTDIRACT_DIR/fastvim
 FASTDIR_POSTCMD="ls"
 FASTDIR_ECHO="off"
 
@@ -12,6 +14,7 @@ FASTACT_CONF="off"
 FASTACT_MENU_CONF="off"
 FASTACT_D_RUNS_MENU="off"
 FASTACT_F_RUNS_MENU="off"
+FASTACT_V_RUNS_MENU="off"
 
 GREEN='\033[1;32m'
 CTX_COLOR=$GREEN
@@ -51,6 +54,10 @@ fastdiract_get_fastdir_ctx() {
 
 fastdiract_get_fastact_ctx() {
   echo "$(readlink -f $FASTACT_FILE | cut -d'_' -f3)"
+}
+
+fastdiract_get_fastvim_ctx() {
+  echo "$(readlink -f $FASTVIM_FILE | cut -d'_' -f3)"
 }
 
 #######################
@@ -149,6 +156,7 @@ dx() {
     unlink "$FASTDIR_FILE"
     ln -s "$FASTDIRACT_DIR/fastdirs__${choice}" "$FASTDIR_FILE"
     d?
+    eval $FASTDIR_CTX_POSTSWITCH_CMD
   fi
 }
 
@@ -202,18 +210,18 @@ alias f7='fastact_run $(cat $FASTACT_FILE | grep "f7 = " | cut -d"=" -f 2-)'
 alias f8='fastact_run $(cat $FASTACT_FILE | grep "f8 = " | cut -d"=" -f 2-)'
 alias f9='fastact_run $(cat $FASTACT_FILE | grep "f9 = " | cut -d"=" -f 2-)'
 
-# NOTE: When using f1.-f9., use single quotes to wrap the whole command
-SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-alias f0.='python $SCRIPT_DIR/fastactions.py f0'
-alias f1.='python $SCRIPT_DIR/fastactions.py f1'
-alias f2.='python $SCRIPT_DIR/fastactions.py f2'
-alias f3.='python $SCRIPT_DIR/fastactions.py f3'
-alias f4.='python $SCRIPT_DIR/fastactions.py f4'
-alias f5.='python $SCRIPT_DIR/fastactions.py f5'
-alias f6.='python $SCRIPT_DIR/fastactions.py f6'
-alias f7.='python $SCRIPT_DIR/fastactions.py f7'
-alias f8.='python $SCRIPT_DIR/fastactions.py f8'
-alias f9.='python $SCRIPT_DIR/fastactions.py f9'
+# NOTE: When using f0.-f9., use single quotes to wrap the whole command
+FASTDIRACT_SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+alias f0.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f0'
+alias f1.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f1'
+alias f2.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f2'
+alias f3.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f3'
+alias f4.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f4'
+alias f5.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f5'
+alias f6.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f6'
+alias f7.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f7'
+alias f8.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f8'
+alias f9.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f9'
 alias f?='echo "${CTX_COLOR}[$(fastdiract_get_fastact_ctx)]${NC}"; cat $FASTACT_FILE | grep "f[0-9]"'
 
 f() {
@@ -332,7 +340,7 @@ fX() {
 }
 
 f-() {
-  choice="$(ls -1 $FASTDIRACT_DIR/fastactions__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --prompt="fastaction ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastactions__{}' | grep 'd[0-9]'" --preview-window=wrap)"
+  choice="$(ls -1 $FASTDIRACT_DIR/fastactions__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --prompt="fastaction ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastactions__{}' | grep 'f[0-9]'" --preview-window=wrap)"
   if [ "$(fastdiract_get_fastaction_ctx)" == "$choice" ]; then
     echo "Can't delete the current fastaction ctx; switch to another ctx first"
   else
@@ -341,6 +349,163 @@ f-() {
     if [ "$user_resp" == "y" ]; then
       rm "$FASTDIRACT_DIR/fastactions__$choice"
       echo "\nDeleted fastaction ctx $choice"
+    fi
+  fi
+}
+
+#######################
+# Fastvim Definitions #
+#######################
+alias v0='vim $(cat $FASTVIM_FILE | grep "v0 = " | cut -d"=" -f 2-)'
+alias v1='vim $(cat $FASTVIM_FILE | grep "v1 = " | cut -d"=" -f 2-)'
+alias v2='vim $(cat $FASTVIM_FILE | grep "v2 = " | cut -d"=" -f 2-)'
+alias v3='vim $(cat $FASTVIM_FILE | grep "v3 = " | cut -d"=" -f 2-)'
+alias v4='vim $(cat $FASTVIM_FILE | grep "v4 = " | cut -d"=" -f 2-)'
+alias v5='vim $(cat $FASTVIM_FILE | grep "v5 = " | cut -d"=" -f 2-)'
+alias v6='vim $(cat $FASTVIM_FILE | grep "v6 = " | cut -d"=" -f 2-)'
+alias v7='vim $(cat $FASTVIM_FILE | grep "v7 = " | cut -d"=" -f 2-)'
+alias v8='vim $(cat $FASTVIM_FILE | grep "v8 = " | cut -d"=" -f 2-)'
+alias v9='vim $(cat $FASTVIM_FILE | grep "v9 = " | cut -d"=" -f 2-)'
+
+# NOTE: When using v0.-v9., use single quotes to wrap the whole command
+FASTVIM_SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+alias v0.='python $FASTVIM_SCRIPT_DIR/fastvim.py v0 $(pwd)'
+alias v1.='python $FASTVIM_SCRIPT_DIR/fastvim.py v1 $(pwd)'
+alias v2.='python $FASTVIM_SCRIPT_DIR/fastvim.py v2 $(pwd)'
+alias v3.='python $FASTVIM_SCRIPT_DIR/fastvim.py v3 $(pwd)'
+alias v4.='python $FASTVIM_SCRIPT_DIR/fastvim.py v4 $(pwd)'
+alias v5.='python $FASTVIM_SCRIPT_DIR/fastvim.py v5 $(pwd)'
+alias v6.='python $FASTVIM_SCRIPT_DIR/fastvim.py v6 $(pwd)'
+alias v7.='python $FASTVIM_SCRIPT_DIR/fastvim.py v7 $(pwd)'
+alias v8.='python $FASTVIM_SCRIPT_DIR/fastvim.py v8 $(pwd)'
+alias v9.='python $FASTVIM_SCRIPT_DIR/fastvim.py v9 $(pwd)'
+alias v?='echo "${CTX_COLOR}[$(fastdiract_get_fastvim_ctx)]${NC}"; cat $FASTVIM_FILE | grep "v[0-9]"'
+
+v() {
+ if [ "$FASTVIM_V_RUNS_MENU" == "on" ]; then
+    vm
+  else
+    v?
+  fi
+}
+
+vm() {
+  if ! [ "$#" == 1 -a "$1" == "quiet" ]; then
+    v?
+  fi
+  echo -n "> "
+  reply=$(bash -c "read -n 1 c; echo \$c")
+  echo ""
+  local cmd=""
+  if [ "$reply" == "." ]; then
+    echo -n "Enter v # to set: "
+    vnum=$(bash -c "read -n 1 c; echo \$c")
+    if [[ $vnum =~ [0-9] ]]; then
+      setfile="v${vnum}."
+      echo -n "\nEnter file: "
+      file=$(bash -c "read f; echo \$f")
+      eval "$setfile $file"
+      v?
+    else
+      echo "\ninvalid num # $vnum"
+    fi
+  elif [ "$reply" == "w" ]; then
+    vw
+  elif [ "$reply" == "x" ]; then
+    vx
+  elif [ "$reply" == "X" ]; then
+    vX
+  elif [ "$reply" == "-" ]; then
+    v-
+  elif [[ "$reply" =~ [0-9] ]]; then
+    cmd="v${reply}"
+    if [ "$FASTVIM_MENU_CONF" == "on" -a "$FASTVIM_CONF" != "on" ]; then
+      echo -n "Execute $cmd? [y/n] "
+      user_resp=$(bash -c "read -n 1 c; echo \$c")
+      if [ "$user_resp" == "y" ]; then
+        echo ""
+        eval "$cmd"
+      fi
+    else
+      echo ""
+      eval "$cmd"
+    fi
+  elif [ "$reply" == "?" ]; then
+    echo "= COMMANDS ============================================="
+    echo ". Set vim file w Swap vim files      x Change context"
+    echo "? Show help    0-9 Open file in vim  X Create new context"
+    echo "- Delete context"
+    echo "========================================================"
+    vm "quiet"
+  else
+    echo "invalid cmd \"$reply\""
+  fi
+}
+
+vw() {
+  echo "Swap vims:"
+  echo -n "> "
+  vnum1=$(bash -c "read -n 1 c; echo \$c")
+  echo ""
+  if [[ $vnum1 =~ [0-9] ]]; then
+    echo -n "> "
+    vnum2=$(bash -c "read -n 1 c; echo \$c")
+    echo ""
+    if [[ $vnum2 =~ [0-9] ]]; then
+      vimfile1="$(cat $FASTVIM_FILE | grep 'f'${vnum1}' = ' | cut -d'=' -f 2- | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+      vimfile2="$(cat $FASTVIM_FILE | grep 'f'${vnum2}' = ' | cut -d'=' -f 2- | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+      # 2nd sed command is from
+      # https://stackoverflow.com/questions/29613304/is-it-possible-to-escape-regex-metacharvimers-reliably-with-sed
+      # to escape metacharacters like &&.
+      sed -i --follow-symlinks "s|f${vnum1} =.*$|f${vnum1} = $(sed 's/[&/\]/\\&/g' <<< $vimfile2)|" $FASTVIM_FILE
+      sed -i --follow-symlinks "s|f${vnum2} =.*$|f${vnum2} = $(sed 's/[&/\]/\\&/g' <<< $vimfile1)|" $FASTVIM_FILE
+      v?
+    fi
+  fi
+}
+
+vx() {
+  choice="$(ls -1 $FASTDIRACT_DIR/fastvim__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --prompt="Change vim ctx from [$(fastdiract_get_fastvim_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastvim__{}' | grep 'v[0-9]'" --preview-window=wrap)"
+  # Test to handle case where fzf was cancelled
+  if [ -n "$choice" ]; then
+    unlink "$FASTVIM_FILE"
+    ln -s "$FASTDIRACT_DIR/fastvim__${choice}" "$FASTVIM_FILE"
+    v?
+fi
+}
+
+vX() {
+  echo -n "Create new vim ctx? [y/n] "
+  user_resp=$(bash -c "read -n 1 c; echo \$c")
+  if [ "$user_resp" == "y" ]; then
+    echo -n "\nEnter new ctx name: "
+    read new_ctx
+    echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
+    user_resp=$(bash -c "read -n 1 c; echo \$c")
+    if [ "$user_resp" == "y" ]; then
+      base="$(ls -1 $FASTDIRACT_DIR/fastvim__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastvim__{}' | grep 'v[0-9]'" --preview-window=wrap)"
+      echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
+      user_resp=$(bash -c "read -n 1 c; echo \$c")
+      if [ "$user_resp" == "y" ]; then
+        cp "$FASTDIRACT_DIR/fastvim__${base}" "$FASTDIRACT_DIR/fastvim__${new_ctx}"
+        unlink "$FASTVIM_FILE"
+        ln -s "$FASTDIRACT_DIR/fastvim__${new_ctx}" "$FASTVIM_FILE"
+        echo "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
+      fi
+    fi
+  fi
+}
+
+v-() {
+  choice="$(ls -1 $FASTDIRACT_DIR/fastvim__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --prompt="vim ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastvim__{}' | grep 'v[0-9]'" --preview-window=wrap)"
+  if [ "$(fastdiract_get_fastvim_ctx)" == "$choice" ]; then
+    echo "Can't delete the current vim ctx; switch to another ctx first"
+  else
+    echo -ne "Delete vim ctx ${CTX_COLOR}[$choice]${NC}? [y/n] "
+    user_resp=$(bash -c "read -n 1 c; echo \$c")
+    if [ "$user_resp" == "y" ]; then
+      rm "$FASTDIRACT_DIR/fastvim__$choice"
+      echo "\nDeleted vim ctx $choice"
     fi
   fi
 }
