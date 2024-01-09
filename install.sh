@@ -8,7 +8,6 @@ if ! [ -d "$FASTDIRACT_DIR" ]; then
     mkdir -p "$FASTDIRACT_DIR"
 else
     echo "error: $FASTDIRACT_DIR already exists"
-    exit 1
 fi
 
 if ! [ -f "${FASTDIR_FILE}__default" ]; then
