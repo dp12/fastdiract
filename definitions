@@ -176,7 +176,7 @@ dX() {
         cp "$FASTDIRACT_DIR/fastdirs__${base}" "$FASTDIRACT_DIR/fastdirs__${new_ctx}"
         unlink "$FASTDIR_FILE"
         ln -s "$FASTDIRACT_DIR/fastdirs__${new_ctx}" "$FASTDIR_FILE"
-        echo "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
+        echo -e "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
       fi
     fi
   fi
@@ -222,7 +222,7 @@ alias f6.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f6'
 alias f7.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f7'
 alias f8.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f8'
 alias f9.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f9'
-alias f?='echo "${CTX_COLOR}[$(fastdiract_get_fastact_ctx)]${NC}"; cat $FASTACT_FILE | grep "f[0-9]"'
+alias f?='echo -e "${CTX_COLOR}[$(fastdiract_get_fastact_ctx)]${NC}"; cat $FASTACT_FILE | grep "f[0-9]"'
 
 f() {
   if [ "$FASTACT_F_RUNS_MENU" == "on" ]; then
@@ -333,7 +333,7 @@ fX() {
         cp "$FASTDIRACT_DIR/fastactions__${base}" "$FASTDIRACT_DIR/fastactions__${new_ctx}"
         unlink "$FASTACT_FILE"
         ln -s "$FASTDIRACT_DIR/fastactions__${new_ctx}" "$FASTACT_FILE"
-        echo "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
+        echo -e "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
       fi
     fi
   fi
@@ -379,7 +379,7 @@ alias v6.='python $FASTVIM_SCRIPT_DIR/fastvim.py v6 $(pwd)'
 alias v7.='python $FASTVIM_SCRIPT_DIR/fastvim.py v7 $(pwd)'
 alias v8.='python $FASTVIM_SCRIPT_DIR/fastvim.py v8 $(pwd)'
 alias v9.='python $FASTVIM_SCRIPT_DIR/fastvim.py v9 $(pwd)'
-alias v?='echo "${CTX_COLOR}[$(fastdiract_get_fastvim_ctx)]${NC}"; cat $FASTVIM_FILE | grep "v[0-9]"'
+alias v?='echo -e "${CTX_COLOR}[$(fastdiract_get_fastvim_ctx)]${NC}"; cat $FASTVIM_FILE | grep "v[0-9]"'
 
 v() {
  if [ "$FASTVIM_V_RUNS_MENU" == "on" ]; then
@@ -490,7 +490,7 @@ vX() {
         cp "$FASTDIRACT_DIR/fastvim__${base}" "$FASTDIRACT_DIR/fastvim__${new_ctx}"
         unlink "$FASTVIM_FILE"
         ln -s "$FASTDIRACT_DIR/fastvim__${new_ctx}" "$FASTVIM_FILE"
-        echo "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
+        echo -e "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
       fi
     fi
   fi
