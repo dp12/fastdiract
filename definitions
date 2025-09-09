@@ -452,13 +452,13 @@ vw() {
     vnum2=$(bash -c "read -n 1 c; echo \$c")
     echo ""
     if [[ $vnum2 =~ [0-9] ]]; then
-      vimfile1="$(cat $FASTVIM_FILE | grep 'f'${vnum1}' = ' | cut -d'=' -f 2- | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
-      vimfile2="$(cat $FASTVIM_FILE | grep 'f'${vnum2}' = ' | cut -d'=' -f 2- | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+      vimfile1="$(cat $FASTVIM_FILE | grep 'v'${vnum1}' = ' | cut -d'=' -f 2- | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+      vimfile2="$(cat $FASTVIM_FILE | grep 'v'${vnum2}' = ' | cut -d'=' -f 2- | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
       # 2nd sed command is from
       # https://stackoverflow.com/questions/29613304/is-it-possible-to-escape-regex-metacharvimers-reliably-with-sed
       # to escape metacharacters like &&.
-      sed -i --follow-symlinks "s|f${vnum1} =.*$|f${vnum1} = $(sed 's/[&/\]/\\&/g' <<< $vimfile2)|" $FASTVIM_FILE
-      sed -i --follow-symlinks "s|f${vnum2} =.*$|f${vnum2} = $(sed 's/[&/\]/\\&/g' <<< $vimfile1)|" $FASTVIM_FILE
+      sed -i --follow-symlinks "s|v${vnum1} =.*$|v${vnum1} = $(sed 's/[&/\]/\\&/g' <<< $vimfile2)|" $FASTVIM_FILE
+      sed -i --follow-symlinks "s|v${vnum2} =.*$|v${vnum2} = $(sed 's/[&/\]/\\&/g' <<< $vimfile1)|" $FASTVIM_FILE
       v?
     fi
   fi
