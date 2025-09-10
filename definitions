@@ -164,7 +164,7 @@ dX() {
   echo -n "Create new fastdir ctx? [y/n] "
   user_resp=$(bash -c "read -n 1 c; echo \$c")
   if [ "$user_resp" == "y" ]; then
-    echo -n "\nEnter new ctx name: "
+    echo -ne "\nEnter new ctx name: "
     read new_ctx
     echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
     user_resp=$(bash -c "read -n 1 c; echo \$c")
@@ -191,7 +191,7 @@ d-() {
     user_resp=$(bash -c "read -n 1 c; echo \$c")
     if [ "$user_resp" == "y" ]; then
       rm "$FASTDIRACT_DIR/fastdirs__$choice"
-      echo "\nDeleted fastdir ctx $choice"
+      echo -e "\nDeleted fastdir ctx $choice"
     fi
   fi
 }
@@ -245,12 +245,12 @@ fm() {
     cmdnum=$(bash -c "read -n 1 c; echo \$c")
     if [[ $cmdnum =~ [0-9] ]]; then
       setcmd="f${cmdnum}."
-      echo -n "\nEnter cmd: "
+      echo -ne "\nEnter cmd: "
       cmd=$(bash -c "read c; echo \$c")
       eval "$setcmd $cmd"
       f?
     else
-      echo "\ninvalid cmd # $cmdnum"
+      echo -e "\ninvalid cmd # $cmdnum"
     fi
   elif [ "$reply" == "w" ]; then
     fw
@@ -321,7 +321,7 @@ fX() {
   echo -n "Create new fastaction ctx? [y/n] "
   user_resp=$(bash -c "read -n 1 c; echo \$c")
   if [ "$user_resp" == "y" ]; then
-    echo -n "\nEnter new ctx name: "
+    echo -ne "\nEnter new ctx name: "
     read new_ctx
     echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
     user_resp=$(bash -c "read -n 1 c; echo \$c")
@@ -348,7 +348,7 @@ f-() {
     user_resp=$(bash -c "read -n 1 c; echo \$c")
     if [ "$user_resp" == "y" ]; then
       rm "$FASTDIRACT_DIR/fastactions__$choice"
-      echo "\nDeleted fastaction ctx $choice"
+      echo -e "\nDeleted fastaction ctx $choice"
     fi
   fi
 }
@@ -402,12 +402,12 @@ vm() {
     vnum=$(bash -c "read -n 1 c; echo \$c")
     if [[ $vnum =~ [0-9] ]]; then
       setfile="v${vnum}."
-      echo -n "\nEnter file: "
+      echo -ne "\nEnter file: "
       file=$(bash -c "read f; echo \$f")
       eval "$setfile $file"
       v?
     else
-      echo "\ninvalid num # $vnum"
+      echo -e "\ninvalid num # $vnum"
     fi
   elif [ "$reply" == "w" ]; then
     vw
@@ -478,7 +478,7 @@ vX() {
   echo -n "Create new vim ctx? [y/n] "
   user_resp=$(bash -c "read -n 1 c; echo \$c")
   if [ "$user_resp" == "y" ]; then
-    echo -n "\nEnter new ctx name: "
+    echo -ne "\nEnter new ctx name: "
     read new_ctx
     echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
     user_resp=$(bash -c "read -n 1 c; echo \$c")
@@ -505,7 +505,7 @@ v-() {
     user_resp=$(bash -c "read -n 1 c; echo \$c")
     if [ "$user_resp" == "y" ]; then
       rm "$FASTDIRACT_DIR/fastvim__$choice"
-      echo "\nDeleted vim ctx $choice"
+      echo -e "\nDeleted vim ctx $choice"
     fi
   fi
 }
