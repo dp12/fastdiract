@@ -2,11 +2,12 @@
 # Config Options #
 ##################
 FASTDIRACT_DIR=~/.fastdiract
-FASTDIR_FILE=$FASTDIRACT_DIR/fastdirs
+FASTDIR_FILE=$FASTDIRACT_DIR/fastdir
 FASTDIR_CTX_POSTSWITCH_CMD="d0"
-FASTACT_FILE=$FASTDIRACT_DIR/fastactions
+FASTACT_FILE=$FASTDIRACT_DIR/fastact
 FASTVIM_FILE=$FASTDIRACT_DIR/fastvim
-FASTDIR_POSTCMD="ls"
+FASTGDB_FILE=$FASTDIRACT_DIR/fastgdb
+FASTDIR_POSTCMD="eza"
 FASTDIR_ECHO="off"
 
 FASTACT_ECHO="on"
@@ -49,15 +50,19 @@ fastact_run () {
 }
 
 fastdiract_get_fastdir_ctx() {
-  echo "$(readlink -f $FASTDIR_FILE | cut -d'_' -f3)"
+  basename "$(readlink -f $FASTDIR_FILE)" | sed 's/fastdir__//'
 }
 
 fastdiract_get_fastact_ctx() {
-  echo "$(readlink -f $FASTACT_FILE | cut -d'_' -f3)"
+  basename "$(readlink -f $FASTDIR_FILE)" | sed 's/fastact__//'
 }
 
 fastdiract_get_fastvim_ctx() {
-  echo "$(readlink -f $FASTVIM_FILE | cut -d'_' -f3)"
+  basename "$(readlink -f $FASTDIR_FILE)" | sed 's/fastvim__//'
+}
+
+fastdiract_get_fastgdb_ctx() {
+  basename "$(readlink -f $FASTDIR_FILE)" | sed 's/fastgdb__//'
 }
 
 #######################
@@ -150,7 +155,7 @@ dw() {
 }
 
 dx() {
-  choice="$(ls -1 $FASTDIRACT_DIR/fastdirs__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --prompt="Change fastdir ctx from [$(fastdiract_get_fastdir_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastdirs__{}' | grep 'd[0-9]'" --preview-window=wrap)"
+  choice="$(ls -1 $FASTDIRACT_DIR/fastdir__* | while read line; do echo $(basename $line) | sed 's/fastdir__//' ; done | fzf --prompt="Change fastdir ctx from [$(fastdiract_get_fastdir_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastdirs__{}' | grep 'd[0-9]'" --preview-window=wrap)"
   # Test to handle case where fzf was cancelled
   if [ -n "$choice" ]; then
     unlink "$FASTDIR_FILE"
@@ -169,21 +174,60 @@ dX() {
     echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
     user_resp=$(bash -c "read -n 1 c; echo \$c")
     if [ "$user_resp" == "y" ]; then
-      base="$(ls -1 $FASTDIRACT_DIR/fastdirs__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastdirs__{}' | grep 'd[0-9]'" --preview-window=wrap)"
-      echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
+      echo -ne "\nCreate ${CTX_COLOR}[$new_ctx]${NC} from an existing ctx? [y/n] "
       user_resp=$(bash -c "read -n 1 c; echo \$c")
       if [ "$user_resp" == "y" ]; then
-        cp "$FASTDIRACT_DIR/fastdirs__${base}" "$FASTDIRACT_DIR/fastdirs__${new_ctx}"
-        unlink "$FASTDIR_FILE"
-        ln -s "$FASTDIRACT_DIR/fastdirs__${new_ctx}" "$FASTDIR_FILE"
-        echo -e "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
+        base="$(ls -1 $FASTDIRACT_DIR/fastdir__* | while read line; do echo $(basename $line) | sed 's/fastdir__//' ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastdirs__{}' | grep 'd[0-9]'" --preview-window=wrap)"
+        echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
+        user_resp=$(bash -c "read -n 1 c; echo \$c")
+        if [ "$user_resp" == "y" ]; then
+          cp "$FASTDIRACT_DIR/fastdirs__${base}" "$FASTDIRACT_DIR/fastdirs__${new_ctx}"
+        fi
+      else
+        cat <<EOF > "$FASTDIRACT_DIR/fastdirs__${new_ctx}"
+d0 =
+d1 =
+d2 =
+d3 =
+d4 =
+d5 =
+d6 =
+d7 =
+d8 =
+d9 =
+EOF
       fi
+      unlink "$FASTDIR_FILE"
+      ln -s "$FASTDIRACT_DIR/fastdirs__${new_ctx}" "$FASTDIR_FILE"
+      echo -e "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
     fi
   fi
 }
 
+# dX() {
+#   echo -n "Create new fastdir ctx? [y/n] "
+#   user_resp=$(bash -c "read -n 1 c; echo \$c")
+#   if [ "$user_resp" == "y" ]; then
+#     echo -n "\nEnter new ctx name: "
+#     read new_ctx
+#     echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
+#     user_resp=$(bash -c "read -n 1 c; echo \$c")
+#     if [ "$user_resp" == "y" ]; then
+#       base="$(ls -1 $FASTDIRACT_DIR/fastdir__* | while read line; do echo $(basename $line) | sed 's/fastdir__//' ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastdirs__{}' | grep 'd[0-9]'" --preview-window=wrap)"
+#       echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
+#       user_resp=$(bash -c "read -n 1 c; echo \$c")
+#       if [ "$user_resp" == "y" ]; then
+#         cp "$FASTDIRACT_DIR/fastdirs__${base}" "$FASTDIRACT_DIR/fastdirs__${new_ctx}"
+#         unlink "$FASTDIR_FILE"
+#         ln -s "$FASTDIRACT_DIR/fastdirs__${new_ctx}" "$FASTDIR_FILE"
+#         echo -e "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
+#       fi
+#     fi
+#   fi
+# }
+
 d-() {
-  choice="$(ls -1 $FASTDIRACT_DIR/fastdirs__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --prompt="fastdir ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastdirs__{}' | grep 'd[0-9]'" --preview-window=wrap)"
+  choice="$(ls -1 $FASTDIRACT_DIR/fastdir__* | while read line; do echo $(basename $line) | sed 's/fastdir__//' ; done | fzf --prompt="fastdir ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastdirs__{}' | grep 'd[0-9]'" --preview-window=wrap)"
   if [ "$(fastdiract_get_fastdir_ctx)" == "$choice" ]; then
     echo "Can't delete the current fastdir ctx; switch to another ctx first"
   else
@@ -191,7 +235,7 @@ d-() {
     user_resp=$(bash -c "read -n 1 c; echo \$c")
     if [ "$user_resp" == "y" ]; then
       rm "$FASTDIRACT_DIR/fastdirs__$choice"
-      echo "\nDeleted fastdir ctx $choice"
+      echo "\nDeleted fastdir ctx ${CTX_COLOR}[$choice]${NC}"
     fi
   fi
 }
@@ -308,7 +352,7 @@ fw() {
 }
 
 fx() {
-  choice="$(ls -1 $FASTDIRACT_DIR/fastactions__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --prompt="Change fastaction ctx from [$(fastdiract_get_fastact_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastactions__{}' | grep 'f[0-9]'" --preview-window=wrap)"
+  choice="$(ls -1 $FASTDIRACT_DIR/fastact__* | while read line; do echo $(basename $line) | sed 's/fastact__//' ; done | fzf --prompt="Change fastaction ctx from [$(fastdiract_get_fastact_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastactions__{}' | grep 'f[0-9]'" --preview-window=wrap)"
   # Test to handle case where fzf was cancelled
   if [ -n "$choice" ]; then
     unlink "$FASTACT_FILE"
@@ -326,7 +370,7 @@ fX() {
     echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
     user_resp=$(bash -c "read -n 1 c; echo \$c")
     if [ "$user_resp" == "y" ]; then
-      base="$(ls -1 $FASTDIRACT_DIR/fastactions__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastactions__{}' | grep 'f[0-9]'" --preview-window=wrap)"
+      base="$(ls -1 $FASTDIRACT_DIR/fastact__* | while read line; do echo $(basename $line) | sed 's/fastact__//' ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastactions__{}' | grep 'f[0-9]'" --preview-window=wrap)"
       echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
       user_resp=$(bash -c "read -n 1 c; echo \$c")
       if [ "$user_resp" == "y" ]; then
@@ -340,7 +384,7 @@ fX() {
 }
 
 f-() {
-  choice="$(ls -1 $FASTDIRACT_DIR/fastactions__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --prompt="fastaction ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastactions__{}' | grep 'f[0-9]'" --preview-window=wrap)"
+  choice="$(ls -1 $FASTDIRACT_DIR/fastact__* | while read line; do echo $(basename $line) | sed 's/fastact__//' ; done | fzf --prompt="fastaction ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastactions__{}' | grep 'f[0-9]'" --preview-window=wrap)"
   if [ "$(fastdiract_get_fastaction_ctx)" == "$choice" ]; then
     echo "Can't delete the current fastaction ctx; switch to another ctx first"
   else
@@ -465,7 +509,7 @@ vw() {
 }
 
 vx() {
-  choice="$(ls -1 $FASTDIRACT_DIR/fastvim__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --prompt="Change vim ctx from [$(fastdiract_get_fastvim_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastvim__{}' | grep 'v[0-9]'" --preview-window=wrap)"
+  choice="$(ls -1 $FASTDIRACT_DIR/fastvim__* | while read line; do echo $(basename $line) | sed 's/fastvim__//' ; done | fzf --prompt="Change vim ctx from [$(fastdiract_get_fastvim_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastvim__{}' | grep 'v[0-9]'" --preview-window=wrap)"
   # Test to handle case where fzf was cancelled
   if [ -n "$choice" ]; then
     unlink "$FASTVIM_FILE"
@@ -483,7 +527,7 @@ vX() {
     echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
     user_resp=$(bash -c "read -n 1 c; echo \$c")
     if [ "$user_resp" == "y" ]; then
-      base="$(ls -1 $FASTDIRACT_DIR/fastvim__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastvim__{}' | grep 'v[0-9]'" --preview-window=wrap)"
+      base="$(ls -1 $FASTDIRACT_DIR/fastvim__* | while read line; do echo $(basename $line) | sed 's/fastvim__//' ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastvim__{}' | grep 'v[0-9]'" --preview-window=wrap)"
       echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
       user_resp=$(bash -c "read -n 1 c; echo \$c")
       if [ "$user_resp" == "y" ]; then
@@ -497,7 +541,7 @@ vX() {
 }
 
 v-() {
-  choice="$(ls -1 $FASTDIRACT_DIR/fastvim__* | while read line; do echo $(basename $line) | cut -d'_' -f3 ; done | fzf --prompt="vim ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastvim__{}' | grep 'v[0-9]'" --preview-window=wrap)"
+  choice="$(ls -1 $FASTDIRACT_DIR/fastvim__* | while read line; do echo $(basename $line) | sed 's/fastvim__//' ; done | fzf --prompt="vim ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastvim__{}' | grep 'v[0-9]'" --preview-window=wrap)"
   if [ "$(fastdiract_get_fastvim_ctx)" == "$choice" ]; then
     echo "Can't delete the current vim ctx; switch to another ctx first"
   else
@@ -506,6 +550,53 @@ v-() {
     if [ "$user_resp" == "y" ]; then
       rm "$FASTDIRACT_DIR/fastvim__$choice"
       echo "\nDeleted vim ctx $choice"
+    fi
+  fi
+}
+
+
+gx() {
+  choice="$(ls -1 $FASTDIRACT_DIR/fastgdb__* | while read line; do echo $(basename $line) | sed 's/fastgdb__//' ; done | fzf --prompt="Change gdb ctx from [$(fastdiract_get_fastgdb_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastgdb__{}' | grep 'v[0-9]'" --preview-window=wrap)"
+  # Test to handle case where fzf was cancelled
+  if [ -n "$choice" ]; then
+    unlink "$FASTGDB_FILE"
+    ln -s "$FASTDIRACT_DIR/fastgdb__${choice}" "$FASTGDB_FILE"
+    v?
+fi
+}
+
+gX() {
+  echo -n "Create new gdb ctx? [y/n] "
+  user_resp=$(bash -c "read -n 1 c; echo \$c")
+  if [ "$user_resp" == "y" ]; then
+    echo -n "\nEnter new ctx name: "
+    read new_ctx
+    echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
+    user_resp=$(bash -c "read -n 1 c; echo \$c")
+    if [ "$user_resp" == "y" ]; then
+      base="$(ls -1 $FASTDIRACT_DIR/fastgdb__* | while read line; do echo $(basename $line) | sed 's/fastgdb__//' ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastgdb__{}' | grep 'v[0-9]'" --preview-window=wrap)"
+      echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
+      user_resp=$(bash -c "read -n 1 c; echo \$c")
+      if [ "$user_resp" == "y" ]; then
+        cp "$FASTDIRACT_DIR/fastgdb__${base}" "$FASTDIRACT_DIR/fastgdb__${new_ctx}"
+        unlink "$FASTGDB_FILE"
+        ln -s "$FASTDIRACT_DIR/fastgdb__${new_ctx}" "$FASTGDB_FILE"
+        echo -e "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
+      fi
+    fi
+  fi
+}
+
+g-() {
+  choice="$(ls -1 $FASTDIRACT_DIR/fastgdb__* | while read line; do echo $(basename $line) | sed 's/fastgdb__//' ; done | fzf --prompt="gdb ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastgdb__{}' | grep 'v[0-9]'" --preview-window=wrap)"
+  if [ "$(fastdiract_get_fastgdb_ctx)" == "$choice" ]; then
+    echo "Can't delete the current gdb ctx; switch to another ctx first"
+  else
+    echo -ne "Delete gdb ctx ${CTX_COLOR}[$choice]${NC}? [y/n] "
+    user_resp=$(bash -c "read -n 1 c; echo \$c")
+    if [ "$user_resp" == "y" ]; then
+      rm "$FASTDIRACT_DIR/fastgdb__$choice"
+      echo "\nDeleted gdb ctx $choice"
     fi
   fi
 }

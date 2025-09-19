@@ -48,4 +48,46 @@ else
     echo "fastactions file already exists"
 fi
 
+if ! [ -f "${FASTVIM_FILE}__default" ]; then
+    cat <<EOF > "${FASTVIM_FILE}__default"
+v0 = vim alpha
+v1 = vim beta
+v2 = vim gamma
+v3 = vim delta
+v4 = vim epsilon
+v5 = vim zeta
+v6 = vim eta
+v7 = vim theta
+v8 = vim iota
+v9 = vim kappa
+EOF
+    ln -s "$FASTDIRACT_DIR/fastvim__default" "$FASTVIM_FILE"
+    echo "Creating fastvim template"
+else
+    echo "fastvim file already exists"
+fi
+
+if ! [ -f "${FASTGDB_FILE}__default" ]; then
+    cat <<EOF > "${FASTGDB_FILE}__default"
+define f1
+end
+
+define f2
+end
+
+define f3
+end
+
+define f4
+end
+
+define f5
+end
+EOF
+    ln -s "$FASTDIRACT_DIR/fastgdb__default" "$FASTGDB_FILE"
+    ln -s "$FASTGDB_FILE" "$FASTDIRACT_DIR/.gdbinit"
+    echo "Creating fastgdb template"
+else
+    echo "fastgdb file already exists"
+fi
 echo "Run \"source $SCRIPT_DIR/definitions\" and add it to your bashrc/zshrc file"
