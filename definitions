@@ -54,15 +54,15 @@ fastdiract_get_fastdir_ctx() {
 }
 
 fastdiract_get_fastact_ctx() {
-  basename "$(readlink -f $FASTDIR_FILE)" | sed 's/fastact__//'
+  basename "$(readlink -f $FASTACT_FILE)" | sed 's/fastact__//'
 }
 
 fastdiract_get_fastvim_ctx() {
-  basename "$(readlink -f $FASTDIR_FILE)" | sed 's/fastvim__//'
+  basename "$(readlink -f $FASTVIM_FILE)" | sed 's/fastvim__//'
 }
 
 fastdiract_get_fastgdb_ctx() {
-  basename "$(readlink -f $FASTDIR_FILE)" | sed 's/fastgdb__//'
+  basename "$(readlink -f $FASTGDB_FILE)" | sed 's/fastgdb__//'
 }
 
 #######################
@@ -555,6 +555,7 @@ v-() {
 }
 
 
+alias g='echo -e "${CTX_COLOR}[$(fastdiract_get_fastgdb_ctx)]${NC}"; cat $FASTGDB_FILE | head -n50'
 gx() {
   choice="$(ls -1 $FASTDIRACT_DIR/fastgdb__* | while read line; do echo $(basename $line) | sed 's/fastgdb__//' ; done | fzf --prompt="Change gdb ctx from [$(fastdiract_get_fastgdb_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastgdb__{}' | grep 'v[0-9]'" --preview-window=wrap)"
   # Test to handle case where fzf was cancelled

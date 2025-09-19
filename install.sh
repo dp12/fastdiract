@@ -69,19 +69,19 @@ fi
 
 if ! [ -f "${FASTGDB_FILE}__default" ]; then
     cat <<EOF > "${FASTGDB_FILE}__default"
-define f1
+define g1
 end
 
-define f2
+define g2
 end
 
-define f3
+define g3
 end
 
-define f4
+define g4
 end
 
-define f5
+define g5
 end
 EOF
     ln -s "$FASTDIRACT_DIR/fastgdb__default" "$FASTGDB_FILE"
