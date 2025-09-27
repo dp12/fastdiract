@@ -555,7 +555,7 @@ v-() {
 }
 
 
-alias g='echo -e "${CTX_COLOR}[$(fastdiract_get_fastgdb_ctx)]${NC}"; cat $FASTGDB_FILE | head -n50'
+alias g='echo -e "${CTX_COLOR}[$(fastdiract_get_fastgdb_ctx)]${NC}"; cat $FASTGDB_FILE | grep -A3 "define"'
 gx() {
   choice="$(ls -1 $FASTDIRACT_DIR/fastgdb__* | while read line; do echo $(basename $line) | sed 's/fastgdb__//' ; done | fzf --prompt="Change gdb ctx from [$(fastdiract_get_fastgdb_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastgdb__{}' | grep 'v[0-9]'" --preview-window=wrap)"
   # Test to handle case where fzf was cancelled
