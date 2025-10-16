@@ -169,7 +169,7 @@ dX() {
   echo -n "Create new fastdir ctx? [y/n] "
   user_resp=$(bash -c "read -n 1 c; echo \$c")
   if [ "$user_resp" == "y" ]; then
-    echo -n "\nEnter new ctx name: "
+    echo -ne "\nEnter new ctx name: "
     read new_ctx
     echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
     user_resp=$(bash -c "read -n 1 c; echo \$c")
@@ -204,28 +204,6 @@ EOF
   fi
 }
 
-# dX() {
-#   echo -n "Create new fastdir ctx? [y/n] "
-#   user_resp=$(bash -c "read -n 1 c; echo \$c")
-#   if [ "$user_resp" == "y" ]; then
-#     echo -n "\nEnter new ctx name: "
-#     read new_ctx
-#     echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
-#     user_resp=$(bash -c "read -n 1 c; echo \$c")
-#     if [ "$user_resp" == "y" ]; then
-#       base="$(ls -1 $FASTDIRACT_DIR/fastdir__* | while read line; do echo $(basename $line) | sed 's/fastdir__//' ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastdir__{}' | grep 'd[0-9]'" --preview-window=wrap)"
-#       echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
-#       user_resp=$(bash -c "read -n 1 c; echo \$c")
-#       if [ "$user_resp" == "y" ]; then
-#         cp "$FASTDIRACT_DIR/fastdir__${base}" "$FASTDIRACT_DIR/fastdir__${new_ctx}"
-#         unlink "$FASTDIR_FILE"
-#         ln -s "$FASTDIRACT_DIR/fastdir__${new_ctx}" "$FASTDIR_FILE"
-#         echo -e "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
-#       fi
-#     fi
-#   fi
-# }
-
 d-() {
   choice="$(ls -1 $FASTDIRACT_DIR/fastdir__* | while read line; do echo $(basename $line) | sed 's/fastdir__//' ; done | fzf --prompt="fastdir ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastdir__{}' | grep 'd[0-9]'" --preview-window=wrap)"
   if [ "$(fastdiract_get_fastdir_ctx)" == "$choice" ]; then
@@ -235,7 +213,7 @@ d-() {
     user_resp=$(bash -c "read -n 1 c; echo \$c")
     if [ "$user_resp" == "y" ]; then
       rm "$FASTDIRACT_DIR/fastdir__$choice"
-      echo "\nDeleted fastdir ctx ${CTX_COLOR}[$choice]${NC}"
+      echo -e "\nDeleted fastdir ctx ${CTX_COLOR}[$choice]${NC}"
     fi
   fi
 }
@@ -362,23 +340,40 @@ fi
 }
 
 fX() {
-  echo -n "Create new fastaction ctx? [y/n] "
+  echo -n "Create new fastact ctx? [y/n] "
   user_resp=$(bash -c "read -n 1 c; echo \$c")
   if [ "$user_resp" == "y" ]; then
-    echo -n "\nEnter new ctx name: "
+    echo -ne "\nEnter new ctx name: "
     read new_ctx
     echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
     user_resp=$(bash -c "read -n 1 c; echo \$c")
     if [ "$user_resp" == "y" ]; then
-      base="$(ls -1 $FASTDIRACT_DIR/fastact__* | while read line; do echo $(basename $line) | sed 's/fastact__//' ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastactions__{}' | grep 'f[0-9]'" --preview-window=wrap)"
-      echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
+      echo -ne "\nCreate ${CTX_COLOR}[$new_ctx]${NC} from an existing ctx? [y/n] "
       user_resp=$(bash -c "read -n 1 c; echo \$c")
       if [ "$user_resp" == "y" ]; then
-        cp "$FASTDIRACT_DIR/fastactions__${base}" "$FASTDIRACT_DIR/fastactions__${new_ctx}"
-        unlink "$FASTACT_FILE"
-        ln -s "$FASTDIRACT_DIR/fastactions__${new_ctx}" "$FASTACT_FILE"
-        echo -e "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
+        base="$(ls -1 $FASTDIRACT_DIR/fastact__* | while read line; do echo $(basename $line) | sed 's/fastact__//' ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastact__{}' | grep 'f[0-9]'" --preview-window=wrap)"
+        echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
+        user_resp=$(bash -c "read -n 1 c; echo \$c")
+        if [ "$user_resp" == "y" ]; then
+          cp "$FASTDIRACT_DIR/fastact__${base}" "$FASTDIRACT_DIR/fastact__${new_ctx}"
+        fi
+      else
+        cat <<EOF > "$FASTDIRACT_DIR/fastact__${new_ctx}"
+f0 =
+f1 =
+f2 =
+f3 =
+f4 =
+f5 =
+f6 =
+f7 =
+f8 =
+f9 =
+EOF
       fi
+      unlink "$FASTACT_FILE"
+      ln -s "$FASTDIRACT_DIR/fastact__${new_ctx}" "$FASTACT_FILE"
+      echo -e "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
     fi
   fi
 }
@@ -519,23 +514,40 @@ fi
 }
 
 vX() {
-  echo -n "Create new vim ctx? [y/n] "
+  echo -n "Create new fastvim ctx? [y/n] "
   user_resp=$(bash -c "read -n 1 c; echo \$c")
   if [ "$user_resp" == "y" ]; then
-    echo -n "\nEnter new ctx name: "
+    echo -ne "\nEnter new ctx name: "
     read new_ctx
     echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
     user_resp=$(bash -c "read -n 1 c; echo \$c")
     if [ "$user_resp" == "y" ]; then
-      base="$(ls -1 $FASTDIRACT_DIR/fastvim__* | while read line; do echo $(basename $line) | sed 's/fastvim__//' ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastvim__{}' | grep 'v[0-9]'" --preview-window=wrap)"
-      echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
+      echo -ne "\nCreate ${CTX_COLOR}[$new_ctx]${NC} from an existing ctx? [y/n] "
       user_resp=$(bash -c "read -n 1 c; echo \$c")
       if [ "$user_resp" == "y" ]; then
-        cp "$FASTDIRACT_DIR/fastvim__${base}" "$FASTDIRACT_DIR/fastvim__${new_ctx}"
-        unlink "$FASTVIM_FILE"
-        ln -s "$FASTDIRACT_DIR/fastvim__${new_ctx}" "$FASTVIM_FILE"
-        echo -e "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
+        base="$(ls -1 $FASTDIRACT_DIR/fastvim__* | while read line; do echo $(basename $line) | sed 's/fastvim__//' ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastvim__{}' | grep 'v[0-9]'" --preview-window=wrap)"
+        echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
+        user_resp=$(bash -c "read -n 1 c; echo \$c")
+        if [ "$user_resp" == "y" ]; then
+          cp "$FASTDIRACT_DIR/fastvim__${base}" "$FASTDIRACT_DIR/fastvim__${new_ctx}"
+        fi
+      else
+        cat <<EOF > "$FASTDIRACT_DIR/fastvim__${new_ctx}"
+v0 =
+v1 =
+v2 =
+v3 =
+v4 =
+v5 =
+v6 =
+v7 =
+v8 =
+v9 =
+EOF
       fi
+      unlink "$FASTVIM_FILE"
+      ln -s "$FASTDIRACT_DIR/fastvim__${new_ctx}" "$FASTVIM_FILE"
+      echo -e "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
     fi
   fi
 }
@@ -567,23 +579,44 @@ fi
 }
 
 gX() {
-  echo -n "Create new gdb ctx? [y/n] "
+  echo -n "Create new fastgdb ctx? [y/n] "
   user_resp=$(bash -c "read -n 1 c; echo \$c")
   if [ "$user_resp" == "y" ]; then
-    echo -n "\nEnter new ctx name: "
+    echo -ne "\nEnter new ctx name: "
     read new_ctx
     echo -ne "Use ${CTX_COLOR}[$new_ctx]${NC} as new ctx name? [y/n] "
     user_resp=$(bash -c "read -n 1 c; echo \$c")
     if [ "$user_resp" == "y" ]; then
-      base="$(ls -1 $FASTDIRACT_DIR/fastgdb__* | while read line; do echo $(basename $line) | sed 's/fastgdb__//' ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastgdb__{}' | grep 'v[0-9]'" --preview-window=wrap)"
-      echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
+      echo -ne "\nCreate ${CTX_COLOR}[$new_ctx]${NC} from an existing ctx? [y/n] "
       user_resp=$(bash -c "read -n 1 c; echo \$c")
       if [ "$user_resp" == "y" ]; then
-        cp "$FASTDIRACT_DIR/fastgdb__${base}" "$FASTDIRACT_DIR/fastgdb__${new_ctx}"
-        unlink "$FASTGDB_FILE"
-        ln -s "$FASTDIRACT_DIR/fastgdb__${new_ctx}" "$FASTGDB_FILE"
-        echo -e "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
+        base="$(ls -1 $FASTDIRACT_DIR/fastgdb__* | while read line; do echo $(basename $line) | sed 's/fastgdb__//' ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastgdb__{}' | grep 'v[0-9]'" --preview-window=wrap)"
+        echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
+        user_resp=$(bash -c "read -n 1 c; echo \$c")
+        if [ "$user_resp" == "y" ]; then
+          cp "$FASTDIRACT_DIR/fastgdb__${base}" "$FASTDIRACT_DIR/fastgdb__${new_ctx}"
+        fi
+      else
+        cat <<EOF > "$FASTDIRACT_DIR/fastgdb__${new_ctx}"
+define g1
+end
+
+define g2
+end
+
+define g3
+end
+
+define g4
+end
+
+define g5
+end
+EOF
       fi
+      unlink "$FASTGDB_FILE"
+      ln -s "$FASTDIRACT_DIR/fastgdb__${new_ctx}" "$FASTGDB_FILE"
+      echo -e "\nCreated and switched to new context ${CTX_COLOR}[$new_ctx]${NC}"
     fi
   fi
 }
