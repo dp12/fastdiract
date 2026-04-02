@@ -330,11 +330,11 @@ fw() {
 }
 
 fx() {
-  choice="$(ls -1 $FASTDIRACT_DIR/fastact__* | while read line; do echo $(basename $line) | sed 's/fastact__//' ; done | fzf --prompt="Change fastaction ctx from [$(fastdiract_get_fastact_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastactions__{}' | grep 'f[0-9]'" --preview-window=wrap)"
+  choice="$(ls -1 $FASTDIRACT_DIR/fastact__* | while read line; do echo $(basename $line) | sed 's/fastact__//' ; done | fzf --prompt="Change fastaction ctx from [$(fastdiract_get_fastact_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastact__{}' | grep 'f[0-9]'" --preview-window=wrap)"
   # Test to handle case where fzf was cancelled
   if [ -n "$choice" ]; then
     unlink "$FASTACT_FILE"
-    ln -s "$FASTDIRACT_DIR/fastactions__${choice}" "$FASTACT_FILE"
+    ln -s "$FASTDIRACT_DIR/fastact__${choice}" "$FASTACT_FILE"
     f?
 fi
 }
@@ -379,14 +379,14 @@ EOF
 }
 
 f-() {
-  choice="$(ls -1 $FASTDIRACT_DIR/fastact__* | while read line; do echo $(basename $line) | sed 's/fastact__//' ; done | fzf --prompt="fastaction ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastactions__{}' | grep 'f[0-9]'" --preview-window=wrap)"
+  choice="$(ls -1 $FASTDIRACT_DIR/fastact__* | while read line; do echo $(basename $line) | sed 's/fastact__//' ; done | fzf --prompt="fastaction ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastact__{}' | grep 'f[0-9]'" --preview-window=wrap)"
   if [ "$(fastdiract_get_fastaction_ctx)" == "$choice" ]; then
     echo "Can't delete the current fastaction ctx; switch to another ctx first"
   else
     echo -ne "Delete fastaction ctx ${CTX_COLOR}[$choice]${NC}? [y/n] "
     user_resp=$(bash -c "read -n 1 c; echo \$c")
     if [ "$user_resp" == "y" ]; then
-      rm "$FASTDIRACT_DIR/fastactions__$choice"
+      rm "$FASTDIRACT_DIR/fastact__$choice"
       echo "\nDeleted fastaction ctx $choice"
     fi
   fi
