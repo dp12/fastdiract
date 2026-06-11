@@ -87,6 +87,8 @@ EOF
     ln -s "$FASTDIRACT_DIR/fastgdb__default" "$FASTGDB_FILE"
     ln -s "$FASTGDB_FILE" "$FASTDIRACT_DIR/.gdbinit"
     echo "Creating fastgdb template"
+    echo "To finish setting up fastgdb, add the following to your ~/.gdbinit file:"
+    echo "\"source $FASTDIRACT_DIR/.gdbinit\""
 else
     echo "fastgdb file already exists"
 fi

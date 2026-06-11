@@ -2,6 +2,7 @@
 # Config Options #
 ##################
 FASTDIRACT_DIR=~/.fastdiract
+FASTDIRACT_SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 FASTDIR_FILE=$FASTDIRACT_DIR/fastdir
 FASTDIR_CTX_POSTSWITCH_CMD="d0"
 FASTACT_FILE=$FASTDIRACT_DIR/fastact
@@ -13,9 +14,11 @@ FASTDIR_ECHO="off"
 FASTACT_ECHO="on"
 FASTACT_CONF="off"
 FASTACT_MENU_CONF="off"
-FASTACT_D_RUNS_MENU="off"
+FASTDIR_D_RUNS_MENU="off"
 FASTACT_F_RUNS_MENU="off"
-FASTACT_V_RUNS_MENU="off"
+FASTVIM_V_RUNS_MENU="off"
+
+FASTVIM_EDITOR="vim"
 
 GREEN='\033[1;32m'
 CTX_COLOR=$GREEN
@@ -92,7 +95,7 @@ alias d9.='sed -i --follow-symlinks "s|d9 =.*$|d9 = $(pwd | sed "s|^$HOME|~|")|g
 alias d?='echo -e "${CTX_COLOR}[$(fastdiract_get_fastdir_ctx)]${NC}"; cat $FASTDIR_FILE | grep "d[0-9]"'
 
 d() {
-  if [ "$FASTACT_D_RUNS_MENU" == "on" ]; then
+  if [ "$FASTDIR_D_RUNS_MENU" == "on" ]; then
     dm
   else
     d?
@@ -233,7 +236,6 @@ alias f8='fastact_run $(cat $FASTACT_FILE | grep "f8 = " | cut -d"=" -f 2-)'
 alias f9='fastact_run $(cat $FASTACT_FILE | grep "f9 = " | cut -d"=" -f 2-)'
 
 # NOTE: When using f0.-f9., use single quotes to wrap the whole command
-FASTDIRACT_SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 alias f0.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f0'
 alias f1.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f1'
 alias f2.='python $FASTDIRACT_SCRIPT_DIR/fastactions.py f2'
@@ -395,29 +397,28 @@ f-() {
 #######################
 # Fastvim Definitions #
 #######################
-alias v0='vim $(cat $FASTVIM_FILE | grep "v0 = " | cut -d"=" -f 2-)'
-alias v1='vim $(cat $FASTVIM_FILE | grep "v1 = " | cut -d"=" -f 2-)'
-alias v2='vim $(cat $FASTVIM_FILE | grep "v2 = " | cut -d"=" -f 2-)'
-alias v3='vim $(cat $FASTVIM_FILE | grep "v3 = " | cut -d"=" -f 2-)'
-alias v4='vim $(cat $FASTVIM_FILE | grep "v4 = " | cut -d"=" -f 2-)'
-alias v5='vim $(cat $FASTVIM_FILE | grep "v5 = " | cut -d"=" -f 2-)'
-alias v6='vim $(cat $FASTVIM_FILE | grep "v6 = " | cut -d"=" -f 2-)'
-alias v7='vim $(cat $FASTVIM_FILE | grep "v7 = " | cut -d"=" -f 2-)'
-alias v8='vim $(cat $FASTVIM_FILE | grep "v8 = " | cut -d"=" -f 2-)'
-alias v9='vim $(cat $FASTVIM_FILE | grep "v9 = " | cut -d"=" -f 2-)'
+alias v0='$FASTVIM_EDITOR $(cat $FASTVIM_FILE | grep "v0 = " | cut -d"=" -f 2-)'
+alias v1='$FASTVIM_EDITOR $(cat $FASTVIM_FILE | grep "v1 = " | cut -d"=" -f 2-)'
+alias v2='$FASTVIM_EDITOR $(cat $FASTVIM_FILE | grep "v2 = " | cut -d"=" -f 2-)'
+alias v3='$FASTVIM_EDITOR $(cat $FASTVIM_FILE | grep "v3 = " | cut -d"=" -f 2-)'
+alias v4='$FASTVIM_EDITOR $(cat $FASTVIM_FILE | grep "v4 = " | cut -d"=" -f 2-)'
+alias v5='$FASTVIM_EDITOR $(cat $FASTVIM_FILE | grep "v5 = " | cut -d"=" -f 2-)'
+alias v6='$FASTVIM_EDITOR $(cat $FASTVIM_FILE | grep "v6 = " | cut -d"=" -f 2-)'
+alias v7='$FASTVIM_EDITOR $(cat $FASTVIM_FILE | grep "v7 = " | cut -d"=" -f 2-)'
+alias v8='$FASTVIM_EDITOR $(cat $FASTVIM_FILE | grep "v8 = " | cut -d"=" -f 2-)'
+alias v9='$FASTVIM_EDITOR $(cat $FASTVIM_FILE | grep "v9 = " | cut -d"=" -f 2-)'
 
 # NOTE: When using v0.-v9., use single quotes to wrap the whole command
-FASTVIM_SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-alias v0.='python $FASTVIM_SCRIPT_DIR/fastvim.py v0 $(pwd)'
-alias v1.='python $FASTVIM_SCRIPT_DIR/fastvim.py v1 $(pwd)'
-alias v2.='python $FASTVIM_SCRIPT_DIR/fastvim.py v2 $(pwd)'
-alias v3.='python $FASTVIM_SCRIPT_DIR/fastvim.py v3 $(pwd)'
-alias v4.='python $FASTVIM_SCRIPT_DIR/fastvim.py v4 $(pwd)'
-alias v5.='python $FASTVIM_SCRIPT_DIR/fastvim.py v5 $(pwd)'
-alias v6.='python $FASTVIM_SCRIPT_DIR/fastvim.py v6 $(pwd)'
-alias v7.='python $FASTVIM_SCRIPT_DIR/fastvim.py v7 $(pwd)'
-alias v8.='python $FASTVIM_SCRIPT_DIR/fastvim.py v8 $(pwd)'
-alias v9.='python $FASTVIM_SCRIPT_DIR/fastvim.py v9 $(pwd)'
+alias v0.='python $FASTDIRACT_SCRIPT_DIR/fastvim.py v0 $(pwd)'
+alias v1.='python $FASTDIRACT_SCRIPT_DIR/fastvim.py v1 $(pwd)'
+alias v2.='python $FASTDIRACT_SCRIPT_DIR/fastvim.py v2 $(pwd)'
+alias v3.='python $FASTDIRACT_SCRIPT_DIR/fastvim.py v3 $(pwd)'
+alias v4.='python $FASTDIRACT_SCRIPT_DIR/fastvim.py v4 $(pwd)'
+alias v5.='python $FASTDIRACT_SCRIPT_DIR/fastvim.py v5 $(pwd)'
+alias v6.='python $FASTDIRACT_SCRIPT_DIR/fastvim.py v6 $(pwd)'
+alias v7.='python $FASTDIRACT_SCRIPT_DIR/fastvim.py v7 $(pwd)'
+alias v8.='python $FASTDIRACT_SCRIPT_DIR/fastvim.py v8 $(pwd)'
+alias v9.='python $FASTDIRACT_SCRIPT_DIR/fastvim.py v9 $(pwd)'
 alias v?='echo -e "${CTX_COLOR}[$(fastdiract_get_fastvim_ctx)]${NC}"; cat $FASTVIM_FILE | grep "v[0-9]"'
 
 v() {
@@ -574,7 +575,7 @@ gx() {
   if [ -n "$choice" ]; then
     unlink "$FASTGDB_FILE"
     ln -s "$FASTDIRACT_DIR/fastgdb__${choice}" "$FASTGDB_FILE"
-    v?
+    g
 fi
 }
 
