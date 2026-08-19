@@ -23,7 +23,7 @@ d7 = ~/theta
 d8 = ~/iota
 d9 = ~/kappa
 EOF
-    ln -s "$FASTDIRACT_DIR/fastdirs__default" "$FASTDIR_FILE"
+    ln -s "$FASTDIRACT_DIR/fastdir__default" "$FASTDIR_FILE"
     echo "Creating fastdirs template"
 else
     echo "fastdirs file already exists"
@@ -42,7 +42,7 @@ f7 = echo theta
 f8 = echo iota
 f9 = echo kappa
 EOF
-    ln -s "$FASTDIRACT_DIR/fastactions__default" "$FASTACT_FILE"
+    ln -s "$FASTDIRACT_DIR/fastact__default" "$FASTACT_FILE"
     echo "Creating fastactions template"
 else
     echo "fastactions file already exists"
@@ -67,4 +67,29 @@ else
     echo "fastvim file already exists"
 fi
 
+if ! [ -f "${FASTGDB_FILE}__default" ]; then
+    cat <<EOF > "${FASTGDB_FILE}__default"
+define g1
+end
+
+define g2
+end
+
+define g3
+end
+
+define g4
+end
+
+define g5
+end
+EOF
+    ln -s "$FASTDIRACT_DIR/fastgdb__default" "$FASTGDB_FILE"
+    ln -s "$FASTGDB_FILE" "$FASTDIRACT_DIR/.gdbinit"
+    echo "Creating fastgdb template"
+    echo "To finish setting up fastgdb, add the following to your ~/.gdbinit file:"
+    echo "\"source $FASTDIRACT_DIR/.gdbinit\""
+else
+    echo "fastgdb file already exists"
+fi
 echo "Run \"source $SCRIPT_DIR/definitions\" and add it to your bashrc/zshrc file"
