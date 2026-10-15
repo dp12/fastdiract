@@ -568,9 +568,9 @@ v-() {
 }
 
 
-alias g='echo -e "${CTX_COLOR}[$(fastdiract_get_fastgdb_ctx)]${NC}"; cat $FASTGDB_FILE | grep -A3 "define"'
+alias g='echo -e "${CTX_COLOR}[$(fastdiract_get_fastgdb_ctx)]${NC}"; cat $FASTGDB_FILE | grep -A3 "g[0-9]"'
 gx() {
-  choice="$(ls -1 $FASTDIRACT_DIR/fastgdb__* | while read line; do echo $(basename $line) | sed 's/fastgdb__//' ; done | fzf --prompt="Change gdb ctx from [$(fastdiract_get_fastgdb_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastgdb__{}' | grep 'v[0-9]'" --preview-window=wrap)"
+  choice="$(ls -1 $FASTDIRACT_DIR/fastgdb__* | while read line; do echo $(basename $line) | sed 's/fastgdb__//' ; done | fzf --prompt="Change gdb ctx from [$(fastdiract_get_fastgdb_ctx)] to: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastgdb__{}' | grep -A3 'g[0-9]'" --preview-window=wrap)"
   # Test to handle case where fzf was cancelled
   if [ -n "$choice" ]; then
     unlink "$FASTGDB_FILE"
@@ -591,7 +591,7 @@ gX() {
       echo -ne "\nCreate ${CTX_COLOR}[$new_ctx]${NC} from an existing ctx? [y/n] "
       user_resp=$(bash -c "read -n 1 c; echo \$c")
       if [ "$user_resp" == "y" ]; then
-        base="$(ls -1 $FASTDIRACT_DIR/fastgdb__* | while read line; do echo $(basename $line) | sed 's/fastgdb__//' ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastgdb__{}' | grep 'v[0-9]'" --preview-window=wrap)"
+        base="$(ls -1 $FASTDIRACT_DIR/fastgdb__* | while read line; do echo $(basename $line) | sed 's/fastgdb__//' ; done | fzf --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastgdb__{}' | grep -A3 'g[0-9]'" --preview-window=wrap)"
         echo -ne "\nUse ${CTX_COLOR}[$base]${NC} as base for new ctx? [y/n] "
         user_resp=$(bash -c "read -n 1 c; echo \$c")
         if [ "$user_resp" == "y" ]; then
@@ -623,7 +623,7 @@ EOF
 }
 
 g-() {
-  choice="$(ls -1 $FASTDIRACT_DIR/fastgdb__* | while read line; do echo $(basename $line) | sed 's/fastgdb__//' ; done | fzf --prompt="gdb ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastgdb__{}' | grep 'v[0-9]'" --preview-window=wrap)"
+  choice="$(ls -1 $FASTDIRACT_DIR/fastgdb__* | while read line; do echo $(basename $line) | sed 's/fastgdb__//' ; done | fzf --prompt="gdb ctx to delete: " --preview="echo -e '${CTX_COLOR}[{}]${NC}'; cat '$FASTDIRACT_DIR/fastgdb__{}' | grep -A3 'g[0-9]'" --preview-window=wrap)"
   if [ "$(fastdiract_get_fastgdb_ctx)" == "$choice" ]; then
     echo "Can't delete the current gdb ctx; switch to another ctx first"
   else
